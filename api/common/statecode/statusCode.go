@@ -20,6 +20,11 @@ const (
 
 	NameOrPasswordErr = 1303 //name or password error
 
+	// Study Error
+	TxNotFound          = 1401
+	ReceiptNotFound     = 1402
+	ParameterNotIllegal = 1403
+	BlockNotFound       = 1404
 )
 
 var Msg = map[int]map[int]string{
@@ -78,6 +83,26 @@ var Msg = map[int]map[int]string{
 		LangZh:   "用户名或密码错误",
 		LangZhTw: "用戶名或密碼錯誤",
 		LangEn:   "name or password error",
+	},
+	1401: {
+		LangZh:   "交易不存在",
+		LangZhTw: "交易不存在",
+		LangEn:   "tx not found",
+	},
+	1402: {
+		LangZh:   "回执不存在",
+		LangZhTw: "回执不存在",
+		LangEn:   "receipt not found",
+	},
+	ParameterNotIllegal: {
+		LangZh:   "参数非法",
+		LangZhTw: "參數非法",
+		LangEn:   "parameter not illegal",
+	},
+	BlockNotFound: {
+		LangZh:   "区块不存在",
+		LangZhTw: "區塊不存在",
+		LangEn:   "block not found",
 	},
 }
 

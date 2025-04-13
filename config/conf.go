@@ -71,6 +71,7 @@ type TestNetConfig struct {
 	PlgrAddress          string `toml:"plgr_address"`
 	PledgePoolToken      string `toml:"pledge_pool_token"`
 	BscPledgeOracleToken string `toml:"bsc_pledge_oracle_token"`
+	TestEthUrl           string `toml:"test_eth_url"`
 }
 
 type MainNetConfig struct {

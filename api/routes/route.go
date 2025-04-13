@@ -1,10 +1,11 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"pledge-backend/api/controllers"
 	"pledge-backend/api/middlewares"
 	"pledge-backend/config"
+
+	"github.com/gin-gonic/gin"
 )
 
 func InitRoute(e *gin.Engine) *gin.Engine {
@@ -32,6 +33,12 @@ func InitRoute(e *gin.Engine) *gin.Engine {
 	userController := controllers.UserController{}
 	v2Group.POST("/user/login", userController.Login)                             // login
 	v2Group.POST("/user/logout", middlewares.CheckToken(), userController.Logout) // logout
+
+	v2Group.GET("/getConfig", func(ctx *gin.Context) {
+		ctx.JSON(200, config.Config)
+	})
+
+	InitStudyRoute(e)
 
 	return e
 }

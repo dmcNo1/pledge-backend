@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"pledge-backend/api/common/statecode"
 	"pledge-backend/api/models"
 	"pledge-backend/api/models/request"
@@ -12,6 +11,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type PoolController struct {
@@ -22,6 +23,7 @@ func (c *PoolController) PoolBaseInfo(ctx *gin.Context) {
 	req := request.PoolBaseInfo{}
 	var result []models.PoolBaseInfoRes
 
+	// 参数验证
 	errCode := validate.NewPoolBaseInfo().PoolBaseInfo(ctx, &req)
 	if errCode != statecode.CommonSuccess {
 		res.Response(ctx, errCode, nil)

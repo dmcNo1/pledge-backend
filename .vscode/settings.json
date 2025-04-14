@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
-        "gorm"
+        "gorm",
+        "ethclient",
+        "statecode"
     ]
 }

@@ -27,9 +27,9 @@ func (c *StudyController) GetTxMsg(ctx *gin.Context) {
 	}
 
 	ethService := services.NewEthService()
-	txMsg, err := ethService.GetTxMsg(txHash)
-	if nil != err {
-		response.Response(ctx, statecode.TxNotFound, nil)
+	txMsg, returnCode := ethService.GetTxMsg(txHash)
+	if returnCode != statecode.CommonSuccess {
+		response.Response(ctx, returnCode, nil)
 		return
 	}
 
@@ -50,9 +50,9 @@ func (c *StudyController) GetReceipt(ctx *gin.Context) {
 	}
 
 	ethService := services.NewEthService()
-	receipt, err := ethService.GetReceipt(txHash)
-	if nil != err {
-		response.Response(ctx, statecode.ReceiptNotFound, nil)
+	receipt, returnCode := ethService.GetReceipt(txHash)
+	if returnCode != statecode.CommonSuccess {
+		response.Response(ctx, returnCode, nil)
 		return
 	}
 

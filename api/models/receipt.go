@@ -1,5 +1,7 @@
 package models
 
+import "github.com/ethereum/go-ethereum/core/types"
+
 type Receipt struct {
 	Id              int64  `json:"-" gorm:"primary_key;AUTO_INCREMENT"`
 	Status          uint64 `json:"status" gorm:"column:status"`
@@ -13,4 +15,16 @@ type Receipt struct {
 
 func (r *Receipt) TableName() string {
 	return "receipt"
+}
+
+func NewReceipt(receipt *types.Receipt) *Receipt {
+	return &Receipt{
+		Status:          receipt.Status,
+		TransactionHash: receipt.TxHash.String(),
+		GasUsed:         receipt.GasUsed,
+		ContractAddress: receipt.ContractAddress.String(),
+		BlockNumber:     receipt.BlockNumber.Uint64(),
+		BlockHash:       receipt.BlockHash.String(),
+		Type:            receipt.Type,
+	}
 }

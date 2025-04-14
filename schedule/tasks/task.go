@@ -21,6 +21,7 @@ func Task() {
 	}
 
 	//init task
+	services.NewEthService().GetBlock()
 	services.NewPool().UpdateAllPoolInfo()
 	services.NewTokenPrice().UpdateContractPrice()
 	services.NewTokenSymbol().UpdateContractSymbol()
@@ -39,6 +40,7 @@ func Task() {
 	_ = s.Every(30).Minutes().From(gocron.NextTick()).Do(services.NewBalanceMonitor().Monitor)
 	//_ = s.Every(30).Minutes().From(gocron.NextTick()).Do(services.NewTokenPrice().SavePlgrPrice)
 	_ = s.Every(30).Minutes().From(gocron.NextTick()).Do(services.NewTokenPrice().SavePlgrPriceTestNet)
+	// _ = s.Every(60).Seconds().From(gocron.NextTick()).Do(services.NewEthService().GetBlock)
 	<-s.Start() // Start all the pending jobs
 
 }

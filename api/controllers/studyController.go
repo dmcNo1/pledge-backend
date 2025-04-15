@@ -80,3 +80,21 @@ func (c *StudyController) GetBlock(ctx *gin.Context) {
 
 	response.Response(ctx, statecode.CommonSuccess, block)
 }
+
+// 调用合约方法setItem
+func (c *StudyController) SetItem(ctx *gin.Context) {
+	response := response.Gin{Res: ctx}
+	key := ctx.Query("key")
+	value := ctx.Query("value")
+	if key == "" || value == "" {
+		response.Response(ctx, statecode.CommonErrServerErr, nil)
+		return
+	}
+	ethService := services.NewEthService()
+	res, returnCode := ethService.SetItem(key, value)
+	if statecode.CommonSuccess != returnCode {
+		response.Response(ctx, returnCode, nil)
+		return
+	}
+	response.Response(ctx, statecode.CommonSuccess, res)
+}

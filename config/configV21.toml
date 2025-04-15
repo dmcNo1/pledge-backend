@@ -34,6 +34,8 @@ plgr_address = "0X6AA91CBFE045F9D154050226FCC830DDBA886CED"
 pledge_pool_token = "0x216f718A983FCCb462b338FA9c60f2A89199490c"
 bsc_pledge_oracle_token = "0xd96DBDC193617A0cD4bbf38E78a0fB4799A8E554"
 test_eth_url = "https://eth-sepolia.g.alchemy.com/v2/Ng0L0W_L8-FPX4BWHR5FDvgzyAaRnubA"
+store_address = "0xC55A3204C436623F042b36846B9177921b784E38"
+private_key = "8a34079f38c2135d988dd18700a77e77bca8383d0ad3780e805b64496443cf89"
 
 
 [mainnet]

@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gomodule/redigo/redis"
 	"pledge-backend/config"
 	"pledge-backend/log"
+	"strconv"
 	"time"
+
+	"github.com/gomodule/redigo/redis"
 )
 
 // InitRedis 初始化Redis
@@ -131,6 +133,54 @@ func RedisSetInt64(key string, data int64, time int) error {
 		}
 	}
 	return nil
+}
+
+func RedisZAdd(key string, score int64, data int64, time int) error {
+	conn := RedisConn.Get()
+	defer conn.Close()
+
+	_, err := redis.Int64(conn.Do("zadd", key, score, strconv.FormatInt(data, 10)))
+	if err != nil {
+		return err
+	}
+
+	if time != 0 {
+		_, err = redis.Int64(conn.Do("expire", key, strconv.Itoa(time)))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func RedisZCount(key string, start int64, stop int64) (int, error) {
+	conn := RedisConn.Get()
+	defer conn.Close()
+
+	count, err := redis.Int64(conn.Do("zcount", key, start, stop))
+	if err != nil {
+		return 0, err
+	}
+	return redis.Int(count, err)
+}
+
+func RedisZRange(key string, start int64, stop int64) ([]string, error) {
+	conn := RedisConn.Get()
+	defer conn.Close()
+
+	values, err := redis.Int64(conn.Do("zrange", key, start, stop))
+	if err != nil {
+		return nil, err
+	}
+
+	return redis.Strings(values, err)
+}
+
+func RedisZRem(key string, value string) {
+	conn := RedisConn.Get()
+	defer conn.Close()
+
+	redis.Int64(conn.Do("zrem", key, value))
 }
 
 // RedisGetInt64 get int64 value by key

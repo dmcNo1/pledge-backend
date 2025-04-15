@@ -11,10 +11,13 @@ import (
 	"pledge-backend/api/models/request"
 	"pledge-backend/api/models/response"
 	"pledge-backend/config"
+	"pledge-backend/contract/store"
 	"pledge-backend/db"
 	"pledge-backend/log"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 	"gorm.io/gorm"
@@ -245,6 +248,72 @@ func (s *EthService) GetTransaction(blockResp *response.Block) int {
 	blockResp.TransactionList = transactionRespList
 
 	return statecode.CommonSuccess
+}
+
+func (s *EthService) SetItem(key string, value string) (interface{}, int) {
+	// 建立连接
+	client, err := ethclient.Dial(config.Config.TestNet.TestEthUrl)
+	if nil != err {
+		log.Logger.Error(err.Error())
+		return nil, statecode.CommonErrServerErr
+	}
+	defer client.Close()
+
+	// 生成合约实例
+	storeAddress := common.HexToAddress(config.Config.TestNet.StoreAddress)
+	storeInstance, err := store.NewStore(storeAddress, client)
+	if nil != err {
+		log.Logger.Error(err.Error())
+		return nil, statecode.CommonErrServerErr
+	}
+
+	// 获取私钥
+	privateKey, err := crypto.HexToECDSA(config.Config.TestNet.PrivateKey)
+	if nil != err {
+		log.Logger.Error(err.Error())
+		return nil, statecode.CommonErrServerErr
+	}
+
+	// 封装参数
+	var keyBytes [32]byte
+	var valueBytes [32]byte
+	copy(keyBytes[:], []byte(key))
+	copy(valueBytes[:], []byte(value))
+
+	chainId, err := client.ChainID(context.Background())
+	if nil != err {
+		log.Logger.Error(err.Error())
+		return nil, statecode.CommonErrServerErr
+	}
+	// 创建事务签名者
+	opts, err := bind.NewKeyedTransactorWithChainID(privateKey, chainId)
+	if nil != err {
+		log.Logger.Error(err.Error())
+		return nil, statecode.CommonErrServerErr
+	}
+
+	// 生成交易
+	tx, err := storeInstance.SetItem(opts, keyBytes, valueBytes)
+	if nil != err {
+		log.Logger.Error(err.Error())
+		return nil, statecode.CommonErrServerErr
+	}
+
+	// 等待交易结果
+	receipt, err := bind.WaitMined(context.Background(), client, tx)
+	if nil != err {
+		log.Logger.Error(err.Error())
+		return nil, statecode.CommonErrServerErr
+	}
+
+	callOpts := bind.CallOpts{Context: context.Background()}
+	trueValue, err := storeInstance.Items(&callOpts, keyBytes)
+
+	res := map[string]interface{}{
+		"receipt": &receipt,
+		"value":   trueValue,
+	}
+	return res, statecode.CommonSuccess
 }
 
 func checkSpecialBlock(blockNum *big.Int) bool {
